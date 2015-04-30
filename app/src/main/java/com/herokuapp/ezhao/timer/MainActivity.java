@@ -2,11 +2,11 @@ package com.herokuapp.ezhao.timer;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-
+import android.widget.TextView;
+import com.doomonafireball.betterpickers.hmspicker.HmsPickerBuilder;
+import com.doomonafireball.betterpickers.hmspicker.HmsPickerDialogFragment.HmsPickerDialogHandler;
 import com.todddavies.components.progressbar.ProgressWheel;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,13 +14,15 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements HmsPickerDialogHandler {
     @InjectView(R.id.pwHabitProgress) ProgressWheel pwHabitProgress;
+    @InjectView(R.id.tvGoalTime) TextView tvGoalTime;
     private enum SpinStatus {
         STOPPED, INDEFINITE, GOAL_SET
     }
     SpinStatus spinStatus;
     long startTime;
+    long goalTime;
     Timer timer;
 
     @Override
@@ -29,40 +31,68 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.inject(this);
+        getSupportActionBar().hide();
         spinStatus = SpinStatus.STOPPED;
         pwHabitProgress.setProgress(0);
     }
 
     @OnClick(R.id.pwHabitProgress)
-    public void onWheelTap(View view) {
-        final ProgressWheel progressWheel = (ProgressWheel) view;
-
+    public void onWheelTap() {
         if (spinStatus == SpinStatus.INDEFINITE) {
             spinStatus = SpinStatus.STOPPED;
-            pwHabitProgress.stopSpinning();
+            this.pwHabitProgress.stopSpinning();
+            if (timer != null) {
+                timer.cancel();
+            }
+        } else if (spinStatus == SpinStatus.GOAL_SET) {
+            spinStatus = SpinStatus.STOPPED;
             if (timer != null) {
                 timer.cancel();
             }
         } else {
-            spinStatus = SpinStatus.INDEFINITE;
-            pwHabitProgress.spin();
             startTime = System.currentTimeMillis();
-
             if (timer != null) {
                 timer.cancel();
             }
             timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    int diff = (int) (System.currentTimeMillis() - startTime);
-                    int hundredths = (diff / 10) % 100;
-                    int seconds = (diff / 1000) % 60;
-                    int minutes = (diff/ (1000 * 60)) % 60;
-                    progressWheel.setText(String.format("%02d:%02d:%02d", minutes, seconds, hundredths));
-                }
-            }, 0, 9);
+
+            if (goalTime > 0) {
+                spinStatus = SpinStatus.GOAL_SET;
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        int diff = (int) (System.currentTimeMillis() - startTime);
+                        pwHabitProgress.setProgress((int) (360*diff/goalTime));
+                        setProgressWheelTime(diff);
+                    }
+                }, 0, 15);
+            } else {
+                spinStatus = SpinStatus.INDEFINITE;
+                this.pwHabitProgress.spin();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        int diff = (int) (System.currentTimeMillis() - startTime);
+                        setProgressWheelTime(diff);
+                    }
+                }, 0, 9);
+            }
         }
+    }
+
+    @OnClick(R.id.tvGoalTime)
+    public void onGoalTimeTap() {
+        HmsPickerBuilder hpb = new HmsPickerBuilder()
+                .setFragmentManager(getSupportFragmentManager())
+                .setStyleResId(R.style.BetterPickersDialogFragment);
+        hpb.show();
+    }
+
+    private void setProgressWheelTime(int diff) {
+        int hundredths = (diff / 10) % 100;
+        int seconds = (diff / 1000) % 60;
+        int minutes = (diff/ (1000 * 60)) % 60;
+        pwHabitProgress.setText(String.format("%02d:%02d:%02d", minutes, seconds, hundredths));
     }
 
     @Override
@@ -85,5 +115,15 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDialogHmsSet(int reference, int hours, int minutes, int seconds) {
+        if (hours == 0) {
+            tvGoalTime.setText(String.format("%02d:%02d:00", minutes, seconds));
+        } else {
+            tvGoalTime.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+        }
+        goalTime = 1000 * (((hours * 60) + minutes) * 60 + seconds);
     }
 }

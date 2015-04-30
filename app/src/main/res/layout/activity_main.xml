@@ -7,8 +7,8 @@
 
     <com.todddavies.components.progressbar.ProgressWheel
         android:id="@+id/pwHabitProgress"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="50dp"
         ProgressWheel:text="@string/default_time"
@@ -20,5 +20,15 @@
         ProgressWheel:barWidth="11dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/tvGoalTime"
+        android:gravity="center"
+        android:text="@string/default_time"
+        android:layout_below="@id/pwHabitProgress"
+        android:background="@drawable/edit_text"
+        android:layout_centerHorizontal="true"
+        android:layout_width="320dp"
+        android:layout_height="72dp" />
 
 </RelativeLayout>
