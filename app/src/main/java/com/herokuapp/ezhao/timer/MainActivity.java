@@ -4,6 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.TextView;
 import com.doomonafireball.betterpickers.hmspicker.HmsPickerBuilder;
 import com.doomonafireball.betterpickers.hmspicker.HmsPickerDialogFragment.HmsPickerDialogHandler;
@@ -40,6 +41,7 @@ public class MainActivity extends ActionBarActivity implements HmsPickerDialogHa
     @OnClick(R.id.pwHabitProgress)
     public void onWheelTap() {
         if (spinStatus == SpinStatus.STOPPED) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             startTime = System.currentTimeMillis();
             if (timer != null) {
                 timer.cancel();
@@ -126,6 +128,7 @@ public class MainActivity extends ActionBarActivity implements HmsPickerDialogHa
     }
 
     private void resetProgressWheel() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         spinStatus = SpinStatus.STOPPED;
         if (timer != null) {
             timer.cancel();
