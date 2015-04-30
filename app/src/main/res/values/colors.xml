@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="timer_primary">#CBF77F</color>
+    <color name="timer_primary_highlight">#ffe5f761</color>
     <color name="timer_background">#D2D7CD</color>
 </resources>

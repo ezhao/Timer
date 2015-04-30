@@ -22,6 +22,7 @@ public class MainActivity extends ActionBarActivity implements HmsPickerDialogHa
     }
     SpinStatus spinStatus;
     long startTime;
+    int currentDiff;
     long goalTime;
     Timer timer;
 
@@ -61,9 +62,9 @@ public class MainActivity extends ActionBarActivity implements HmsPickerDialogHa
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        int diff = (int) (System.currentTimeMillis() - startTime);
-                        pwHabitProgress.setProgress((int) (360*diff/goalTime));
-                        setProgressWheelTime(diff);
+                        currentDiff = (int) (System.currentTimeMillis() - startTime);
+                        pwHabitProgress.setProgress((int) (360*currentDiff/goalTime));
+                        pwHabitProgress.setText(getTimeString(currentDiff));
                     }
                 }, 0, 15);
             } else {
@@ -72,8 +73,8 @@ public class MainActivity extends ActionBarActivity implements HmsPickerDialogHa
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        int diff = (int) (System.currentTimeMillis() - startTime);
-                        setProgressWheelTime(diff);
+                        currentDiff = (int) (System.currentTimeMillis() - startTime);
+                        pwHabitProgress.setText(getTimeString(currentDiff));
                     }
                 }, 0, 9);
             }
@@ -88,11 +89,17 @@ public class MainActivity extends ActionBarActivity implements HmsPickerDialogHa
         hpb.show();
     }
 
-    private void setProgressWheelTime(int diff) {
+    @OnClick(R.id.btnSetGoal)
+    public void onSetGoalTap() {
+        goalTime = currentDiff;
+        tvGoalTime.setText(getTimeString(currentDiff));
+    }
+
+    private String getTimeString(int diff) {
         int hundredths = (diff / 10) % 100;
         int seconds = (diff / 1000) % 60;
         int minutes = (diff/ (1000 * 60)) % 60;
-        pwHabitProgress.setText(String.format("%02d:%02d:%02d", minutes, seconds, hundredths));
+        return String.format("%02d:%02d:%02d", minutes, seconds, hundredths);
     }
 
     @Override

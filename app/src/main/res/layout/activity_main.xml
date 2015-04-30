@@ -9,11 +9,11 @@
         android:id="@+id/pwHabitProgress"
         android:layout_width="320dp"
         android:layout_height="320dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
         ProgressWheel:text="@string/default_time"
         ProgressWheel:textColor="#222"
-        ProgressWheel:textSize="18sp"
+        ProgressWheel:textSize="28sp"
         ProgressWheel:rimColor="@color/timer_background"
         ProgressWheel:rimWidth="12dp"
         ProgressWheel:barColor="@color/timer_primary"
@@ -25,10 +25,25 @@
         android:id="@+id/tvGoalTime"
         android:gravity="center"
         android:text="@string/default_time"
+        android:textColor="#222"
+        android:textSize="18sp"
         android:layout_below="@id/pwHabitProgress"
         android:background="@drawable/edit_text"
         android:layout_centerHorizontal="true"
         android:layout_width="320dp"
-        android:layout_height="72dp" />
+        android:layout_height="60dp" />
+
+    <Button
+        android:id="@+id/btnSetGoal"
+        android:gravity="center"
+        android:text="@string/set_goal_title"
+        android:textColor="#FFF"
+        android:textSize="18sp"
+        android:layout_below="@id/tvGoalTime"
+        android:background="@drawable/button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:layout_width="320dp"
+        android:layout_height="60dp" />
 
 </RelativeLayout>
