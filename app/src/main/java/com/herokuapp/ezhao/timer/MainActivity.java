@@ -39,18 +39,7 @@ public class MainActivity extends ActionBarActivity implements HmsPickerDialogHa
 
     @OnClick(R.id.pwHabitProgress)
     public void onWheelTap() {
-        if (spinStatus == SpinStatus.INDEFINITE) {
-            spinStatus = SpinStatus.STOPPED;
-            this.pwHabitProgress.stopSpinning();
-            if (timer != null) {
-                timer.cancel();
-            }
-        } else if (spinStatus == SpinStatus.GOAL_SET) {
-            spinStatus = SpinStatus.STOPPED;
-            if (timer != null) {
-                timer.cancel();
-            }
-        } else {
+        if (spinStatus == SpinStatus.STOPPED) {
             startTime = System.currentTimeMillis();
             if (timer != null) {
                 timer.cancel();
@@ -78,6 +67,8 @@ public class MainActivity extends ActionBarActivity implements HmsPickerDialogHa
                     }
                 }, 0, 9);
             }
+        } else {
+            resetProgressWheel();
         }
     }
 
@@ -132,5 +123,13 @@ public class MainActivity extends ActionBarActivity implements HmsPickerDialogHa
             tvGoalTime.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
         }
         goalTime = 1000 * (((hours * 60) + minutes) * 60 + seconds);
+    }
+
+    private void resetProgressWheel() {
+        spinStatus = SpinStatus.STOPPED;
+        if (timer != null) {
+            timer.cancel();
+        }
+        pwHabitProgress.stopSpinning();
     }
 }
